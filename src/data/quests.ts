@@ -1,4 +1,3 @@
-\
 import { Quest } from "@/types";
 
 export const defaultQuests: Quest[] = [

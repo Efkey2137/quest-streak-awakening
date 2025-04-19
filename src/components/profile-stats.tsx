@@ -3,9 +3,9 @@ import { useAppContext } from "@/contexts/AppContext";
 import { Trophy, Activity, Check, Landmark, BarChart3, Dumbbell, Move, Footprints } from "lucide-react";
 import { Quest } from "@/types";
 
-// Helper function to get icon for a specific quest or category
-const getIcon = (id: string) => {
-  switch (id) {
+// Helper function to get icon for a specific quest ID or category name
+const getIcon = (idOrCategory: string) => {
+  switch (idOrCategory) {
     case 'walk': return <Footprints className="w-4 h-4 text-blue-400" />;
     case 'pushups': return <Dumbbell className="w-4 h-4 text-red-400" />;
     case 'squats': return <Activity className="w-4 h-4 text-green-400" />;
@@ -20,19 +20,39 @@ const getIcon = (id: string) => {
 export function ProfileStats() {
   const { history, streak, quests, profile } = useAppContext();
 
+  // Ensure quests is an array before proceeding
+  if (!Array.isArray(quests)) {
+    console.error("Quests data is not available or not an array.");
+    return <div>Error loading quest data.</div>; // Or some placeholder/error UI
+  }
+
+  // Create a map for quick quest lookup
+  const questMap = new Map<string, Quest>(quests.map(q => [q.id, q]));
+
   // Calculate totals from history
   const totalStats = history.reduce((acc, day) => {
+    // Ensure day.dailyProgress is an array
+    if (!Array.isArray(day.dailyProgress)) {
+        return acc; // Skip this day if progress data is missing/invalid
+    }
+
     acc.completedQuests += day.completedQuests;
     acc.earnedCurrency += day.earnedCurrency;
 
     day.dailyProgress.forEach(progress => {
-      if (progress.completed) {
-        const quest = quests.find(q => q.id === progress.id);
+      // Ensure progress object is valid
+      if (!progress || typeof progress !== 'object') return;
+      
+      if (progress.completed && progress.id) {
+        const quest = questMap.get(progress.id);
         if (quest) {
-          // Aggregate by quest ID
-          acc.questTotals[quest.id] = (acc.questTotals[quest.id] || 0) + progress.targetValue;
-          // Aggregate by category
-          acc.categoryTotals[quest.category] = (acc.categoryTotals[quest.category] || 0) + 1;
+          // Aggregate by quest ID (using target value from progress)
+          acc.questTotals[quest.id] = (acc.questTotals[quest.id] || 0) + (progress.targetValue || 0);
+          
+          // Aggregate by category (check if category exists)
+          if (quest.category) {
+              acc.categoryTotals[quest.category] = (acc.categoryTotals[quest.category] || 0) + 1;
+          }
         }
       }
     });
@@ -45,7 +65,8 @@ export function ProfileStats() {
     categoryTotals: {} as Record<string, number> 
   });
 
-  const questCategories = [...new Set(quests.map(q => q.category))];
+  // Get unique categories from the available quests list
+  const questCategories = [...new Set(quests.map(q => q.category).filter(Boolean))]; // Filter out undefined/null categories
 
   return (
     <div className="solo-card space-y-6">
@@ -74,7 +95,7 @@ export function ProfileStats() {
             <span className="text-gray-400">Longest Streak</span>
             <div className="flex items-center gap-2">
               <Trophy className="w-4 h-4 text-yellow-500" />
-              <span className="font-medium">{streak.longestStreak} days</span>
+              <span className="font-medium">{streak?.longestStreak ?? 0} days</span> {/* Add null check for streak */}
             </div>
           </div>
         </div>
@@ -84,7 +105,7 @@ export function ProfileStats() {
       <div>
         <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
           <Activity className="w-5 h-5" />
-          Quest Performance
+          Quest Performance (Total Value)
         </h2>
         <div className="space-y-3">
           {quests.map(quest => (
@@ -103,7 +124,7 @@ export function ProfileStats() {
       <div>
         <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
           <Check className="w-5 h-5" />
-          Completed by Category
+          Completed Quests by Category
         </h2>
         <div className="space-y-3">
           {questCategories.map(category => (

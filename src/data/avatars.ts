@@ -4,28 +4,56 @@ import { Avatar } from "@/types";
 export const avatars: Avatar[] = [
   {
     id: 1,
-    imageUrl: "/lovable-uploads/f466c6cf-ea4d-495a-933b-37e02446390f.png",
-    name: "Hunter",
+    imageUrl: "/avatars/1.png",
+    name: "E-Rank Hunter",
     unlocked: true,
   },
   {
     id: 2,
-    imageUrl: "/lovable-uploads/20bd5e15-eca4-4d11-9b4c-a0537dead5d6.png",
-    name: "Shadow",
+    imageUrl: "/avatars/2.png",
+    name: "System Watcher",
     unlocked: true,
   },
   {
     id: 3,
-    imageUrl: "/lovable-uploads/0272143f-6dcb-45ce-b2c4-437a52cfa930.png",
-    name: "Monarch",
+    imageUrl: "/avatars/3.png",
+    name: "Shadow Guard",
     unlocked: true,
   },
   {
     id: 4,
-    imageUrl: "/lovable-uploads/847bec26-6993-4d92-90f7-62e151e4c3be.png",
-    name: "Dragon Knight",
+    imageUrl: "/avatars/p1.png",
+    name: "Dark Heir",
     unlocked: false,
     price: 1000,
+  },
+  {
+    id: 5,
+    imageUrl: "/avatars/p2.png",
+    name: "Shadow Knight",
+    unlocked: false,
+    price: 2000,
+  },
+  {
+    id: 6,
+    imageUrl: "/avatars/p3.png",
+    name: " Awakened One",
+    unlocked: false,
+    price: 3000,
+  },
+  {
+    id: 7,
+    imageUrl: "/avatars/p4.png",
+    name: "Trainee",
+    unlocked: false,
+    price: 4000,
+  },
+  {
+    id: 8,
+    imageUrl: "/avatars/p5.png",
+    name: "Soulbound",
+    unlocked: false,
+    price: 5000,
   }
 ];
 

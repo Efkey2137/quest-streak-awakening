@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Avatar } from "@/types";
 import { cn } from "@/lib/utils";
@@ -32,19 +31,28 @@ export function AvatarSelector({ onSelect, selectedId, showUnlockButton = false 
             "relative flex flex-col items-center p-2 rounded-lg border-2 transition-all",
             avatar.unlocked
               ? "cursor-pointer hover:scale-105"
-              : "cursor-not-allowed opacity-70",
+              : "cursor-not-allowed",
             selectedId === avatar.id
               ? "border-sololevel-purple glow-box"
               : "border-gray-700"
           )}
         >
           <div 
-            className={cn(
-              "w-16 h-16 rounded-full flex items-center justify-center mb-2",
-              getAvatarPlaceholder(avatar.id)
-            )}
+            className="relative w-16 h-16 rounded-full flex items-center justify-center mb-2 overflow-hidden"
           >
-            {!avatar.unlocked && <LockIcon className="w-6 h-6 text-gray-400" />}
+            <img
+              src={getAvatarPlaceholder(avatar.id)}
+              alt={avatar.name}
+              className={cn(
+                "w-full h-full rounded-full",
+                !avatar.unlocked && "opacity-50"
+              )}
+            />
+            {!avatar.unlocked && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                <LockIcon className="w-6 h-6 text-white" />
+              </div>
+            )}
           </div>
           <span className="text-sm font-medium truncate w-full text-center">
             {avatar.name}

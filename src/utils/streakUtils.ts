@@ -1,4 +1,3 @@
-\
 import { StreakConfig, QuestProgress, QuestHistory } from "@/types";
 import { getStreakConfig, saveStreakConfig, getTodayString, getQuestProgress, getQuestHistory, saveQuestHistory } from "./storage";
 
