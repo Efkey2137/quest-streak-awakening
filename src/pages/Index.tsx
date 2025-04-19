@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AppProvider, useAppContext } from "@/contexts/AppContext";
 import { SetupForm } from "@/components/setup-form";
 import { ProfileCard } from "@/components/profile-card";
+import { ProfileStats } from "@/components/profile-stats";
 import { StreakBanner } from "@/components/streak-banner";
 import { QuestCard } from "@/components/quest-card";
 import { HistoryView } from "@/components/history-view";
