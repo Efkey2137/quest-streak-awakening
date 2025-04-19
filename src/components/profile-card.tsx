@@ -1,39 +1,45 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Pencil, Landmark, Flame, Trophy } from "lucide-react";
+import { Landmark, Flame, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppContext } from "@/contexts/AppContext";
 import { getAvatarPlaceholder } from "@/data/avatars";
+import { useLocation } from "react-router-dom";
 
 interface ProfileCardProps {
-  onEditProfile: () => void;
+  onEditProfile?: () => void;
 }
 
 export function ProfileCard({ onEditProfile }: ProfileCardProps) {
   const { profile, streak } = useAppContext();
+  const location = useLocation();
+  const isProfilePage = location.pathname === "/profile";
   
   return (
     <div className="solo-card mb-4">
       <div className="flex items-center gap-4">
-        <div className={cn(
-          "w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold shadow-md",
-          getAvatarPlaceholder(profile.avatarId)
-        )}>
-          {profile.nickname.charAt(0).toUpperCase()}
+        <div className="w-16 h-16 rounded-full overflow-hidden">
+          <img 
+            src={getAvatarPlaceholder(profile.avatarId)} 
+            alt={`Avatar ${profile.avatarId}`}
+            className="w-full h-full object-cover"
+          />
         </div>
         
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-bold text-gradient">{profile.nickname}</h2>
-            <Button 
-              onClick={onEditProfile} 
-              variant="ghost" 
-              size="icon" 
-              className="h-6 w-6"
-            >
-              <Pencil className="h-3 w-3" />
-            </Button>
+            {isProfilePage && onEditProfile && (
+              <Button 
+                onClick={onEditProfile} 
+                variant="ghost" 
+                size="sm"
+                className="text-gray-400 hover:text-white"
+              >
+                Edit Profile
+              </Button>
+            )}
           </div>
           
           <div className="flex items-center gap-4 mt-1">
