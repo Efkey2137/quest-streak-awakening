@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AppProvider, useAppContext } from "@/contexts/AppContext";
 import { SetupForm } from "@/components/setup-form";
 import { ProfileCard } from "@/components/profile-card";
@@ -24,7 +23,6 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState("home");
   const [showProfileEditor, setShowProfileEditor] = useState(false);
   
-  // If setup is not complete, show the setup form
   if (!setupComplete) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -57,6 +55,7 @@ function AppContent() {
                     onUpdateProgress={(value) => updateQuestProgress(quest.id, value)}
                     onChangeDifficulty={(difficulty) => updateDifficulty(quest.id, difficulty)}
                     streakMultiplier={streakMultiplier}
+                    showDifficultySelect={false}
                   />
                 );
               })}
@@ -79,6 +78,7 @@ function AppContent() {
                   onUpdateProgress={(value) => updateQuestProgress(quest.id, value)}
                   onChangeDifficulty={(difficulty) => updateDifficulty(quest.id, difficulty)}
                   streakMultiplier={streakMultiplier}
+                  showDifficultySelect={true}
                 />
               );
             })}
@@ -92,7 +92,7 @@ function AppContent() {
         {activeTab === "profile" && (
           <div className="space-y-4">
             <ProfileCard onEditProfile={() => setShowProfileEditor(true)} />
-            <HistoryView />
+            <ProfileStats />
           </div>
         )}
       </div>

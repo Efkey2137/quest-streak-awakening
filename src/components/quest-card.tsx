@@ -1,11 +1,10 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Quest, QuestProgress } from "@/types";
-import { Activity, Award, ChevronDown, Dumbbell, Footprints, Move } from "lucide-react";
+import { Activity, Award, Dumbbell, Footprints, Move } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -14,6 +13,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { calculateQuestReward } from "@/data/quests";
+import { useToast } from "@/hooks/use-toast";
+import { useAppContext } from "@/contexts/AppContext";
 
 interface QuestCardProps {
   quest: Quest;
@@ -22,7 +23,10 @@ interface QuestCardProps {
   onUpdateProgress: (value: number) => void;
   onChangeDifficulty: (difficulty: 'easy' | 'medium' | 'hard') => void;
   streakMultiplier: number;
+  showDifficultySelect?: boolean;
 }
+
+const DIFFICULTY_CHANGE_COST = 50; // Cost in currency to change difficulty
 
 export function QuestCard({
   quest,
@@ -31,7 +35,11 @@ export function QuestCard({
   onUpdateProgress,
   onChangeDifficulty,
   streakMultiplier,
+  showDifficultySelect = false,
 }: QuestCardProps) {
+  const { toast } = useToast();
+  const { profile, updateProfile } = useAppContext();
+  
   const progressPercentage = Math.min(
     100,
     Math.floor((progress.currentValue / progress.targetValue) * 100)
@@ -40,7 +48,6 @@ export function QuestCard({
   const isCompleted = progress.completed;
   const canComplete = progress.currentValue >= progress.targetValue && !isCompleted;
 
-  // Function to get icon based on quest.icon string
   const getQuestIcon = () => {
     switch (quest.icon) {
       case "footprints":
@@ -62,6 +69,27 @@ export function QuestCard({
   };
 
   const reward = calculateQuestReward(quest, progress.difficulty, streakMultiplier);
+
+  const handleDifficultyChange = (newDifficulty: 'easy' | 'medium' | 'hard') => {
+    if (newDifficulty === progress.difficulty) return;
+    
+    if (profile.currency < DIFFICULTY_CHANGE_COST) {
+      toast({
+        title: "Insufficient Currency",
+        description: `You need ${DIFFICULTY_CHANGE_COST} currency to change difficulty.`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    updateProfile({ currency: profile.currency - DIFFICULTY_CHANGE_COST });
+    onChangeDifficulty(newDifficulty);
+    
+    toast({
+      title: "Difficulty Changed",
+      description: `Quest difficulty changed to ${newDifficulty}. -${DIFFICULTY_CHANGE_COST} currency`,
+    });
+  };
 
   return (
     <div 
@@ -129,22 +157,22 @@ export function QuestCard({
           >
             Complete
           </Button>
-        ) : (
+        ) : showDifficultySelect ? (
           <Select
             value={progress.difficulty}
-            onValueChange={(value) => onChangeDifficulty(value as 'easy' | 'medium' | 'hard')}
+            onValueChange={handleDifficultyChange}
             disabled={isCompleted}
           >
             <SelectTrigger className="flex-1 bg-gray-800 border-gray-700">
               <SelectValue placeholder="Difficulty" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="easy">Easy</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="hard">Hard</SelectItem>
+              <SelectItem value="easy">Easy ({DIFFICULTY_CHANGE_COST})</SelectItem>
+              <SelectItem value="medium">Medium ({DIFFICULTY_CHANGE_COST})</SelectItem>
+              <SelectItem value="hard">Hard ({DIFFICULTY_CHANGE_COST})</SelectItem>
             </SelectContent>
           </Select>
-        )}
+        ) : null}
       </div>
       
       {isCompleted && (
