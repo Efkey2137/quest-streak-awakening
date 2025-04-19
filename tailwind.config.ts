@@ -52,6 +52,15 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Solo Leveling inspired colors
+				sololevel: {
+					dark: '#1A1F2C',
+					darker: '#121212',
+					purple: '#9B87F5',
+					'purple-dark': '#7E69AB',
+					'purple-light': '#D6BCFA',
+					'vivid-purple': '#8B5CF6',
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
