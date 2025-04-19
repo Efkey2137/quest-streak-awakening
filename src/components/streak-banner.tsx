@@ -2,24 +2,17 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Flame, Trophy } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useAppContext } from "@/contexts/AppContext";
 import { getStreakMultiplier } from "@/utils/streakUtils";
 
 export function StreakBanner() {
-  const { streak, updateRequiredQuests, todayCompletedQuests, todayTotalQuests } = useAppContext();
-  
+  const { streak, todayCompletedQuests, todayTotalQuests } = useAppContext();
+
   const streakMultiplier = getStreakMultiplier(streak.currentStreak);
   const streakBonus = streakMultiplier > 1 
     ? `+${Math.round((streakMultiplier - 1) * 100)}%` 
     : "No bonus";
-  
+
   return (
     <div className="solo-card mb-4">
       <div className="flex items-center justify-between">
@@ -75,21 +68,7 @@ export function StreakBanner() {
           
           <div className="flex items-center gap-1">
             <span className="text-xs text-gray-400">Required:</span>
-            <Select
-              value={streak.requiredQuests.toString()}
-              onValueChange={(value) => updateRequiredQuests(parseInt(value, 10))}
-            >
-              <SelectTrigger className="h-7 min-w-0 w-12 bg-gray-800 border-gray-700">
-                <SelectValue placeholder="Required" />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: todayTotalQuests }, (_, i) => i + 1).map((num) => (
-                  <SelectItem key={num} value={num.toString()}>
-                    {num}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+             <span className="text-xs font-medium text-gray-300 pl-1">{streak.requiredQuests}</span>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-
+\
 import { Quest } from "@/types";
 
 export const defaultQuests: Quest[] = [
@@ -6,6 +6,7 @@ export const defaultQuests: Quest[] = [
     id: "walk",
     name: "Walking",
     description: "Walk 10,000 steps or 10 km",
+    category: "Cardio", // Added category
     target: 10000,
     icon: "footprints",
     difficultyMultiplier: {
@@ -19,6 +20,7 @@ export const defaultQuests: Quest[] = [
     id: "pushups",
     name: "Push-ups",
     description: "Complete push-ups",
+    category: "Strength", // Added category
     target: 100,
     icon: "dumbbell",
     difficultyMultiplier: {
@@ -32,6 +34,7 @@ export const defaultQuests: Quest[] = [
     id: "squats",
     name: "Squats",
     description: "Complete squats",
+    category: "Strength", // Added category
     target: 100,
     icon: "activity",
     difficultyMultiplier: {
@@ -45,6 +48,7 @@ export const defaultQuests: Quest[] = [
     id: "situps",
     name: "Sit-ups",
     description: "Complete sit-ups",
+    category: "Core", // Added category
     target: 100,
     icon: "move",
     difficultyMultiplier: {

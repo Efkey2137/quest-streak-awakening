@@ -1,4 +1,4 @@
-
+\
 import { StreakConfig, QuestProgress, QuestHistory } from "@/types";
 import { getStreakConfig, saveStreakConfig, getTodayString, getQuestProgress, getQuestHistory, saveQuestHistory } from "./storage";
 
@@ -103,10 +103,11 @@ export function recordDailyHistory(currencyEarned: number): void {
     totalQuests,
     earnedCurrency: currencyEarned,
     maintainedStreak: completedQuests >= streak.requiredQuests,
+    dailyProgress: todayProgress, // Store the full progress for the day
   };
   
   const history = getQuestHistory();
-  // Don't add duplicate entries for the same day
+  // Replace entry for the same day if it exists
   const updatedHistory = history.filter(h => h.date !== today);
   saveQuestHistory([...updatedHistory, historyEntry]);
 }

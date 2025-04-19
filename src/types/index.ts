@@ -12,6 +12,7 @@ export interface Quest {
   id: string;
   name: string;
   description: string;
+  category: string; // Added category
   target: number;
   icon: string;
   difficultyMultiplier: {
@@ -44,6 +45,7 @@ export interface QuestHistory {
   totalQuests: number;
   earnedCurrency: number;
   maintainedStreak: boolean;
+  dailyProgress: QuestProgress[]; // Added detailed daily progress
 }
 
 export interface AppSettings {

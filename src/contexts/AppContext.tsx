@@ -1,4 +1,4 @@
-
+\
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { 
   UserProfile, 
@@ -22,7 +22,8 @@ import {
   initializeApp,
   hasCompletedSetup,
   initializeTodayQuestProgress,
-  getQuestHistory
+  getQuestHistory,
+  saveStreakConfig // Import saveStreakConfig
 } from "@/utils/storage";
 import { defaultQuests, getQuestTarget, calculateQuestReward } from "@/data/quests";
 import { updateStreak, recordDailyHistory } from "@/utils/streakUtils";
@@ -40,7 +41,7 @@ interface AppContextType {
   
   // Streak and stats
   streak: StreakConfig;
-  updateRequiredQuests: (count: number) => void;
+  updateRequiredQuests: (count: number, cost: number) => boolean; // Updated signature
   
   // Settings
   settings: AppSettings;
@@ -139,7 +140,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setTodayProgress(updatedProgress.filter(p => p.date === todayProgress[0]?.date));
     
     // Calculate reward with streak multiplier
-    const { streak: currentStreak, reward: streakMultiplier } = updateStreak();
+    const { streak: currentStreakValue, reward: streakMultiplier } = updateStreak(); // Use streak: currentStreakValue to avoid name clash
     const reward = calculateQuestReward(
       quest, 
       questProgress.difficulty, 
@@ -147,30 +148,47 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
     
     // Update currency
+    let currentProfile = getUserProfile(); // Get latest profile before updating
     const updatedProfile = { 
-      ...profile, 
-      currency: profile.currency + reward 
+      ...currentProfile, 
+      currency: currentProfile.currency + reward 
     };
     saveUserProfile(updatedProfile);
     setProfile(updatedProfile);
     
-    // Update streak
+    // Update streak state
     setStreak(getStreakConfig());
     
     // Record in history
-    recordDailyHistory(reward);
+    recordDailyHistory(reward); // Pass reward earned from THIS quest
     setHistory(getQuestHistory());
   };
   
-  // Update required quests for streak
-  const updateRequiredQuests = (count: number) => {
+  // Update required quests for streak (with currency cost)
+  const updateRequiredQuests = (count: number, cost: number): boolean => {
+    if (profile.currency < cost) {
+      console.error("Not enough currency to change streak requirement.");
+      return false; // Indicate failure
+    }
+
+    // Deduct currency
+    const updatedProfile = {
+      ...profile,
+      currency: profile.currency - cost
+    };
+    saveUserProfile(updatedProfile);
+    setProfile(updatedProfile);
+
+    // Update streak config and settings
     const updatedStreak = { ...streak, requiredQuests: count };
     const updatedSettings = { ...settings, streakRequirement: count };
     
     setStreak(updatedStreak);
     setSettings(updatedSettings);
     
+    saveStreakConfig(updatedStreak); // Save updated streak config
     saveAppSettings(updatedSettings);
+    return true; // Indicate success
   };
   
   // Update difficulty for a quest
